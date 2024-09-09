@@ -10,7 +10,7 @@ find_package (Eigen3 3.4 REQUIRED NO_MODULE)
 add_subdirectory(pybind11)
 include_directories(include/fdaPDE-cpp/fdaPDE/)
 
-pybind11_add_module(fdapdepy src/main.cpp)
+pybind11_add_module(fdapdepy src/mesh.cpp)
 target_link_libraries (fdapdepy PUBLIC Eigen3::Eigen)
 
 # EXAMPLE_VERSION_INFO is defined by setup.py and passed into the C++ code as a
