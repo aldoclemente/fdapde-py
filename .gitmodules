@@ -1,0 +1,8 @@
+[submodule "extern/pybind11"]
+	path = extern/pybind11
+	url = ../../pybind/pybind11
+	branch = stable
+[submodule "extern/fdaPDE-cpp"]
+	path = extern/fdaPDE-cpp
+	url = https://github.com/fdaPDE/fdaPDE-cpp
+	branch = stable
