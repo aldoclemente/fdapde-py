@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from setuptools import Extension, setup
+from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
@@ -127,15 +127,16 @@ class CMakeBuild(build_ext):
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="fdapdepy", # module name
-    version="0.0.1",
+    version="1.0.0",
     author="Aldo Clemente",
     author_email="aldo.clemente@polimi.it",
     description="...",
     long_description="",
+    packages=find_packages(),  
+    #package_dir={'': 'src'}, # problemi? 
     ext_modules=[CMakeExtension("fdapdepy")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.7",
 )
-
