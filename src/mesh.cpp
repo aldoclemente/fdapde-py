@@ -8,7 +8,7 @@ namespace py = pybind11;
 typedef py_Mesh<2,2> cpp_domain_2d;
 typedef py_Mesh<3,3> cpp_domain_3d;
 
-PYBIND11_MODULE(fdapdepy, mod) {
+PYBIND11_MODULE(_domain, mod) {
     py::class_<py_Mesh<2,2>>(mod, "cpp_domain_2d") // auto domain = 
         .def(py::init< Eigen::Ref<const DMatrix<double>>, 
                        Eigen::Ref<const DMatrix<int>>, 
