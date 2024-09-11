@@ -23,13 +23,18 @@ include_directories(include/fdaPDE-cpp/fdaPDE/)
 python_add_library(_domain MODULE src/mesh.cpp WITH_SOABI)
 target_link_libraries(_domain PRIVATE pybind11::headers Eigen3::Eigen)
 
+python_add_library(_functional_basis MODULE src/functional_basis.cpp WITH_SOABI)
+target_link_libraries(_functional_basis PRIVATE pybind11::headers Eigen3::Eigen)
+
 #pybind11_add_module(fdapdepy src/mesh.cpp)
 #target_link_libraries (fdapdepy PUBLIC Eigen3::Eigen)
 
 # EXAMPLE_VERSION_INFO is defined by setup.py and passed into the C++ code as a
 # define (VERSION_INFO) here.
 target_compile_definitions(_domain PRIVATE VERSION_INFO=${PROJECT_VERSION})
+target_compile_definitions(_functional_basis PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
 install(TARGETS _domain DESTINATION fdapdepy)
+install(TARGETS _functional_basis DESTINATION fdapdepy)
 install(FILES src/fdapdepy/__init__.py
         DESTINATION fdapdepy)
