@@ -1,2 +1,7 @@
 build/
 fdapdepy.egg-info/
+.venv/
+.vscode/
+src/.ipynb_checkpoints/
+tests/.ipynb_checkpoints/
+
