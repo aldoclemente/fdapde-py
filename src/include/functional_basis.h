@@ -1,13 +1,32 @@
+// This file is part of fdaPDE, a C++ library for physics-informed
+// spatial and functional data analysis.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #ifndef __PY_FUNCTIONAL_BASIS_H__
 #define __PY_FUNCTIONAL_BASIS_H__
 
 #include <pybind11/pybind11.h>
+#include<pybind11/eigen.h>
+
 #include "mesh.h"
 
 #include <Eigen/Dense>
 #include <fdaPDE/utils.h>
 #include <fdaPDE/finite_elements.h>
 #include <fdaPDE/geometry.h>
+#include "utils.h"
 using fdapde::core::Triangulation;
 using fdapde::core::Integrator;
 using fdapde::core::LagrangianBasis;
@@ -21,6 +40,8 @@ using fdapde::core::combinations;
 
 namespace py = pybind11;
 
+namespace fdapde{
+namespace py{
 // type-erasure wrapper for a function space object
 struct I_FunctionalSpace {
     template <typename T>
@@ -48,7 +69,7 @@ using FunctionalSpace = fdapde::erase<fdapde::heap_storage, I_FunctionalSpace>;
 // supported basis function types
 enum space_type { fem_lagrange };
 
-template <int M, int N, int R> class py_FunctionalBasis {
+template <int M, int N, int R> class FunctionalBasis {
    private:
     using DomainType = Triangulation<M, N>;
     using FunctionalSpaceType = FunctionalSpace;
@@ -64,18 +85,16 @@ template <int M, int N, int R> class py_FunctionalBasis {
    public:
     
     // constructor
-    py_FunctionalBasis(py::object mesh, int space_type) : space_type_(space_type) {
+    FunctionalBasis(pybind11::object mesh, int space_type) : space_type_(space_type) {
         // set domain
-        
+        using PyDomainType = py::Mesh<DomainType::local_dim, DomainType::embed_dim>;
+
         //try {
-            mesh.attr("cpp_handler")();
-            py::object meshptr = mesh.attr("cpp_handler")();
-            py_Mesh<M, N>* ptr = py::cast<py_Mesh<M, N>*>(meshptr);
+            //mesh.attr("cpp_handler")();
+            //pybind11::object meshptr = mesh.attr("cpp_handler")();
+            //PyDomainType* ptr = pybind11::cast<PyDomainType*>(meshptr);
+            PyDomainType* ptr = get_obj_as<PyDomainType>(mesh, "cpp_handler");
 	        domain_ = ptr->domain();
-        //} catch (py::error_already_set &e) {
-        //    py::print(domain_.nodes());
-        //    py::print("Python exception caught:", e.what());
-        //}
 
             fun_space_ = LagrangianBasis<DomainType, R>(domain_);
         
@@ -100,7 +119,10 @@ template <int M, int N, int R> class py_FunctionalBasis {
     DMatrix<double> dofs_coordinates() { return fun_space_.dofs_coords(); }
     
     // destructor
-    ~py_FunctionalBasis() = default;
+    ~FunctionalBasis() = default;
 };
+
+}   // namespace py
+}   // namespace fdapde
 
 #endif   // __PY_FUNCTIONAL_BASIS_H__
