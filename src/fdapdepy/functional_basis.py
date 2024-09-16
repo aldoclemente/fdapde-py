@@ -7,7 +7,7 @@ class functional_basis:
             self.domain = domain # controllare se viene passato per riferimento (si spera)
             self.__cpp_handler = cpp_lagrange_basis_2d_fe1(domain, 1)
         elif order == 2:
-            self.__cpp_handler = cpp_lagrange_basis_2d_fe2(domain, 2)
+            self.__cpp_handler = cpp_lagrange_basis_2d_fe2(domain, 1)
 
     def size(self):
         return self.__cpp_handler.size()

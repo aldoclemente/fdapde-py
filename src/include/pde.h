@@ -35,9 +35,9 @@ namespace py {
 
 // supported pde instantiations
 enum pde_type {
-    simple_laplacian,        // \mu * \Delta f
-    second_order_elliptic,   // div(K * \nabla f) + dot(b, \nabla f) + c * f
-    second_order_parabolic   // df/dt + div(K * \nabla f) + dot(b, \nabla f) + c * f
+    simple_laplacian = 1,        // \mu * \Delta f
+    second_order_elliptic = 2,   // div(K * \nabla f) + dot(b, \nabla f) + c * f
+    second_order_parabolic = 3   // df/dt + div(K * \nabla f) + dot(b, \nabla f) + c * f
 };
 
 // given a py::PDE_<M, N, R>, we can always cast to an py::PDE to recover the pde backend
@@ -59,9 +59,8 @@ template <int M, int N, int R> class PDE_ : public PDE {
    public:
     // constructor
     PDE_(pybind11::object py_mesh, pybind11::int_ pde_type, pybind11::object pde_params) : pde_type_(pybind11::cast<int>(pde_type)) {
-        
         domain_ = get_obj_as<py::Mesh<M, N>>(py_mesh, "cpp_handler")->domain();
-
+        pde_type_ = pybind11::cast<int>(pde_type);
         // unpack pde parameters
         pybind11::dict pde_params_ = pybind11::cast<pybind11::dict>(pde_params);
         // instantiate pde template based on pde type

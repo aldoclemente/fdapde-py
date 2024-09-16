@@ -67,7 +67,7 @@ struct I_FunctionalSpace {
 using FunctionalSpace = fdapde::erase<fdapde::heap_storage, I_FunctionalSpace>;
 
 // supported basis function types
-enum space_type { fem_lagrange };
+enum space_type { fem_lagrange = 1 };
 
 template <int M, int N, int R> class FunctionalBasis {
    private:
@@ -95,8 +95,14 @@ template <int M, int N, int R> class FunctionalBasis {
             //PyDomainType* ptr = pybind11::cast<PyDomainType*>(meshptr);
             PyDomainType* ptr = get_obj_as<PyDomainType>(mesh, "cpp_handler");
 	        domain_ = ptr->domain();
-
-            fun_space_ = LagrangianBasis<DomainType, R>(domain_);
+            switch (space_type_)
+            {
+            case (space_type::fem_lagrange):
+                fun_space_ = LagrangianBasis<DomainType, R>(domain_);
+                break;
+            default:
+                break;
+            }
         
     }
     std::size_t size() const { return fun_space_.size(); }   // number of basis functions on phyiscal domain
