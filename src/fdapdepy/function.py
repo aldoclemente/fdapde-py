@@ -17,6 +17,10 @@ class function:
             return 
         self.__coefficients = coeffs
     
+    @property
+    def functional_basis(self):
+        return self.__coefficients
+
     def eval(self, locs):
         return self.__functional_basis.eval(locs) * self.__coefficients
 
