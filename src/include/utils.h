@@ -21,7 +21,7 @@ namespace fdapde {
 namespace py {
 
 template <typename T> T* get_obj_as(const pybind11::object& py_obj, const std::string& attr){
-    pybind11::object ptr = py_obj.attr(pybind11::str(attr))();
+    pybind11::object ptr = py_obj.attr(pybind11::str(attr)); // ()
     return pybind11::cast<T*>(ptr);
 }
 

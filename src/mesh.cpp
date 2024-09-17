@@ -25,8 +25,8 @@ namespace py{
 #define mesh_pybind_interface(LocalDim, EmbedDim)                                                                                  \
       .def(pybind11::init< Eigen::Ref<const DMatrix<double>>, Eigen::Ref<const DMatrix<int>>, Eigen::Ref<const DMatrix<int>> > ()) \
       .def("nodes",       &Mesh<LocalDim, EmbedDim>::nodes)                                                                        \
-      .def("neighbors",   &Mesh<LocalDim, EmbedDim>::neighbors)                                                                
-      
+      .def("neighbors",   &Mesh<LocalDim, EmbedDim>::neighbors)                                                                    \
+      .def("elements",    &Mesh<LocalDim, EmbedDim>::cells)
 
 typedef Mesh<2,2> cpp_domain_2d;
 typedef Mesh<3,3> cpp_domain_3d;
@@ -34,13 +34,11 @@ typedef Mesh<3,3> cpp_domain_3d;
 PYBIND11_MODULE(_domain, mod) {
     pybind11::class_<Mesh<2,2>>(mod, "cpp_domain_2d")
          mesh_pybind_interface(2,2)  
-        .def("triangles",   &cpp_domain_2d::cells)
         .def("edges", 
                 static_cast<const DMatrix<int, Eigen::RowMajor> (cpp_domain_2d::*)() const>(&cpp_domain_2d::edges));
 
     pybind11::class_<Mesh<3,3>>(mod, "cpp_domain_3d") // auto domain = 
          mesh_pybind_interface(3,3)
-        .def("tetrahedrons",   &cpp_domain_3d::cells)
         .def("faces", 
                 static_cast<const DMatrix<int, Eigen::RowMajor> (cpp_domain_3d::*)() const>(&cpp_domain_3d::faces));
 
