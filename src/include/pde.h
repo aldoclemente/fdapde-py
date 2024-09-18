@@ -95,8 +95,8 @@ template <int M, int N, int R> class PDE_ : public PDE {
         pde.set_initial_condition(data);
     }
     // getters
-    DMatrix<double> get_quadrature_nodes() const { return integrator_.quadrature_nodes(domain_); };
-    DMatrix<double> get_dofs_coordinates() const { return pde.dof_coords(); };
+    DMatrix<double> quadrature_nodes() const { return integrator_.quadrature_nodes(domain_); };
+    DMatrix<double> dofs_coordinates() const { return pde.dof_coords(); };
     const SpMatrix<double>& mass() const {
         fdapde_assert(init_ == true);
         return pde.mass();

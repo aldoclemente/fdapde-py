@@ -29,6 +29,9 @@ target_link_libraries(_functional_basis PRIVATE pybind11::headers Eigen3::Eigen)
 python_add_library(_pde MODULE src/pde.cpp WITH_SOABI)
 target_link_libraries(_pde PRIVATE pybind11::headers Eigen3::Eigen)
 
+python_add_library(_regression MODULE src/regression.cpp WITH_SOABI)
+target_link_libraries(_regression PRIVATE pybind11::headers Eigen3::Eigen)
+
 #pybind11_add_module(fdapdepy src/mesh.cpp)
 #target_link_libraries (fdapdepy PUBLIC Eigen3::Eigen)
 
@@ -37,9 +40,11 @@ target_link_libraries(_pde PRIVATE pybind11::headers Eigen3::Eigen)
 target_compile_definitions(_domain PRIVATE VERSION_INFO=${PROJECT_VERSION})
 target_compile_definitions(_functional_basis PRIVATE VERSION_INFO=${PROJECT_VERSION})
 target_compile_definitions(_pde PRIVATE VERSION_INFO=${PROJECT_VERSION})
+target_compile_definitions(_regression PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
 install(TARGETS _domain DESTINATION fdapdepy)
 install(TARGETS _functional_basis DESTINATION fdapdepy)
 install(TARGETS _pde DESTINATION fdapdepy)
+install(TARGETS _regression DESTINATION fdapdepy)
 install(FILES src/fdapdepy/__init__.py
         DESTINATION fdapdepy)

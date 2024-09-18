@@ -42,22 +42,36 @@ class pde:
         elif (isinstance(domain, domain2d) & order == 2):
             self.__cpp_handler = cpp_pde_2_2_2(domain, type, params)
 
-        quad_nodes = self.cpp_handler.get_quadrature_nodes()
-        size = self.operator.function.functional_basis.size()
+        quad_nodes = self.cpp_handler.quadrature_nodes()
+
         if(force==None):
-            self.cpp_handler.set_forcing(np.zeros((2*size,1)))
+            self.cpp_handler.set_forcing(np.zeros((quad_nodes.shape[0],1)))
         elif(callable(force)):
             self.cpp_handler.set_forcing(force(quad_nodes))
 
         self.cpp_handler.init()
 
+    def quadrature_nodes(self):
+        return self.cpp_handler.quadrature_nodes()
+
+    def dofs_coordinates(self):
+        return self.cpp_handler.dofs_coordinates()
+
+    def stiff(self):
+        return self.cpp_handler.stiff()
+    
+    def mass(self):
+        return self.cpp_handler.mass()
+    
+    def force(self):
+        return self.cpp_handler.force()
+    
+    def set_dirichlet_bc(self, value):
+        self.cpp_handler.set_dirichlet_bc(value)
+    
     @property
     def operator(self):
         return self.__operator
-
-    @property
-    def force(self):
-        return self.__force
     
     @property 
     def cpp_handler(self):
