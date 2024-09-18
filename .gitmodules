@@ -1,4 +1,4 @@
-[submodule "extern/fdaPDE-cpp"]
+[submodule "fdaPDE-cpp"]
 	path = include/fdaPDE-cpp
-	url = https://github.com/fdaPDE/fdaPDE-cpp
+	url = https://github.com/aldoclemente/fdaPDE-cpp
 	branch = stable
