@@ -123,10 +123,6 @@ struct SRPDE : public RegressionModel<models::SRPDE> {
     using ModelType = models::SRPDE;
     using Base = RegressionModel<ModelType>;
     SRPDE(pybind11::object py_obj, int sampling_type) {
-        //using PyPdeType py::PDE
-        //pybind::print("1.")
-        //auto tmp = get_obj_as<py::PDE>(py_obj); //è una py::PDE che
-        //pybind::print("2.")
         Base::model_ = ModelType( get_obj_as<py::PDE>(py_obj)->pde, Sampling(sampling_type));
     }
 };
