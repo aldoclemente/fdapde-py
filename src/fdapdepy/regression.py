@@ -43,16 +43,12 @@ class  srpde:
         kargs = locals()["kwargs"].keys()
         print(kargs)
         if ("calibration" in kargs):
-            print("ciao")
             if isinstance(locals()["kwargs"]["calibration"], float):
                 fit_data["calibration"] = "off"
                 fit_data["lambda"] = locals()["kwargs"]["calibration"]
-                print("caso scalare")
             elif(isinstance(locals()["kwargs"]["calibration"], dict)):
                 fit_data = locals()["kwargs"]["calibration"]
-                print("caso dict")
             else:
-                print("invalid type bounded to calibration argument.")
                 return
         else:
             fit_data["calibration"] = "off"
