@@ -127,15 +127,15 @@ struct SRPDE : public RegressionModel<models::SRPDE> {
     }
 };
 
-/*
 template <typename RegularizationType> struct GSRPDE : public RegressionModel<models::GSRPDE<RegularizationType>> {
     using ModelType = models::GSRPDE<RegularizationType>;
     using Base = RegressionModel<ModelType>;
     // space-only, space-time parabolic
     GSRPDE(pybind11::object py_obj, int sampling_type, int distribution)
     requires(models::is_space_only<ModelType>::value || models::is_space_time_parabolic<ModelType>::value) {
-        init_(distribution, get_obj_as<py::PDE>.def, Sampling(sampling_type));
+        init_(distribution, get_obj_as<py::PDE>(py_obj)->pde, Sampling(sampling_type));
     }
+
     // space-time separable
     GSRPDE(pybind11::object py_obj1, pybind11::object py_obj2, int sampling_type, int distribution)
     requires(models::is_space_time_separable<ModelType>::value) {
@@ -152,7 +152,7 @@ template <typename RegularizationType> struct GSRPDE : public RegressionModel<mo
         if (distribution == 3) Base::model_ = ModelType(std::forward<Args>(args)..., models::Gamma());
     }
 };
-*/
+
 /*
 template <typename RegularizationType, typename SolutionPolicy>
 struct STRPDE : public RegressionModel<models::STRPDE<RegularizationType, SolutionPolicy>> {

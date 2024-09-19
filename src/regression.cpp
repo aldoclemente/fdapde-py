@@ -33,11 +33,19 @@ namespace py {
 //using cpp_srpde = SRPDE;
 
 PYBIND11_MODULE(_regression, mod) {
-    pybind11::class_< RegressionModel<models::SRPDE>>(mod, "cpp_regression")
+    pybind11::class_< RegressionModel<models::SRPDE>>(mod, "cpp_srpde_base")
         regression_rcpp_interface(models::SRPDE);
 
     pybind11::class_<SRPDE, RegressionModel<models::SRPDE>>(mod, "cpp_srpde")
         .def(pybind11::init<pybind11::object, int>());
+
+    pybind11::class_< RegressionModel<models::GSRPDE<models::SpaceOnly>> >(mod, "cpp_gsrpde_base")
+        regression_rcpp_interface(models::GSRPDE<models::SpaceOnly>);
+
+    pybind11::class_<GSRPDE<models::SpaceOnly>, RegressionModel<models::GSRPDE<models::SpaceOnly>>>(mod, "cpp_gsrpde")
+        .def(pybind11::init<pybind11::object, int ,int>())
+        .def("set_fpirls_tolerance", &GSRPDE<models::SpaceOnly>::set_fpirls_tolerance)
+        .def("set_fpirls_max_iter" , &GSRPDE<models::SpaceOnly>::set_fpirls_max_iter );
 }
 
 }
