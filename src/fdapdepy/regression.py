@@ -66,7 +66,7 @@ class  srpde:
           
         self.__penalty = penalty # pde class
 
-        # sampling type  = 0 -> pointwise
+        # sampling type  = 0 -> pointwise (at mesh nodes)
         sampling = 0
         if ( self.__model == "srpde"):
             self.__cpp_handler = cpp_srpde(penalty, sampling)
