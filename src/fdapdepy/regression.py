@@ -49,15 +49,27 @@ class  srpde:
             print("Wrong 'family argument'")
             return
 
+        self.__observations = None
+        self.__covariates = None
+        self.__locations = None
+        sampling = {}
         # y,data
         if( y is not None):
             self.__observations = y
             self.__covariates = data
+            sampling = 0
         # formula, data (str, pandas.Dataframe)
         elif(formula is not None):
             parsed = parse_formula(formula, data)
             self.__observations = data[parsed["observations"]]
-            self.__covariates = data[parsed["covariates"]]
+            self.__covariates = None if len(parsed["covariates"])==0 else data[parsed["covariates"]]
+            self.__locations = None
+
+            if (len(parsed["locations"]) == 0 or len(parsed["locations"]) == 1): 
+                sampling = 0 
+            elif(len(parsed["locations"]) == 2 and all(elem in data.columns for elem in parsed["locations"])):
+                sampling = 1
+                self.__locations = data[parsed["locations"]]
         else:
             print("Wrong input arguments")
             return
@@ -67,16 +79,18 @@ class  srpde:
         self.__penalty = penalty # pde class
 
         # sampling type  = 0 -> pointwise (at mesh nodes)
-        sampling = 0
         if ( self.__model == "srpde"):
-            self.__cpp_handler = cpp_srpde(penalty, sampling)
+                self.__cpp_handler = cpp_srpde(penalty, sampling)
         else: 
-            self.__cpp_handler = cpp_gsrpde(penaly, sampling, distributions[family])
-
+                self.__cpp_handler = cpp_gsrpde(penaly, sampling, distributions[family])
+        
         self.cpp_handler.set_observations(self.observations)
         
         if(self.covariates is not None):
             self.cpp_handler.set_covariates(self.covariates)
+
+        if(self.locations is not None):
+            self.cpp_handler.set_spatial_locations(self.locations)
 
     def set_lambda(self, value):
         self.cpp_handler.set_lambda(value)
@@ -124,6 +138,10 @@ class  srpde:
     def covariates(self):
         return self.__covariates
 
+    @property
+    def locations(self):
+        return self.__locations
+    
     @property 
     def cpp_handler(self):
         return self.__cpp_handler

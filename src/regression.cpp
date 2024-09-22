@@ -19,15 +19,16 @@
 namespace fdapde {
 namespace py {
   
-#define regression_rcpp_interface(Model)                                                                            \
-      .def("set_lambda"      , &RegressionModel<Model>::set_lambda      )                                           \
-      .def("set_covariates"  , &RegressionModel<Model>::set_covariates  )                                           \
-      .def("set_observations", &RegressionModel<Model>::set_observations)                                           \
-      .def("fit"             , &RegressionModel<Model>::fit             )                                           \
-      .def("fitted"          , &RegressionModel<Model>::fitted          )                                           \
-      .def("f"               , &RegressionModel<Model>::f               )                                           \
-      .def("gcvs"            , &RegressionModel<Model>::gcvs            )                                           \
-      .def("edfs"            , &RegressionModel<Model>::edfs            )                                           \
+#define regression_rcpp_interface(Model)                                                                                \
+      .def("set_lambda"      ,      &RegressionModel<Model>::set_lambda      )                                          \
+      .def("set_covariates"  ,          &RegressionModel<Model>::set_covariates  )                                      \
+      .def("set_observations",          &RegressionModel<Model>::set_observations)                                      \
+      .def("set_spatial_locations",     &RegressionModel<Model>::set_spatial_locations)                                 \
+      .def("fit"             ,           &RegressionModel<Model>::fit             )                                     \
+      .def("fitted"          ,           &RegressionModel<Model>::fitted          )                                     \
+      .def("f"               ,           &RegressionModel<Model>::f               )                                     \
+      .def("gcvs"            ,           &RegressionModel<Model>::gcvs            )                                     \
+      .def("edfs"            , &RegressionModel<Model>::edfs            )                                               \
       .def("optimum"         , &RegressionModel<Model>::optimum         ) 
 
 //using cpp_srpde = SRPDE;

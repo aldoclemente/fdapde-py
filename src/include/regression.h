@@ -107,6 +107,7 @@ template <typename ModelType> class RegressionModel {
     // setters
     void set_observations(const DMatrix<double>& y) { data_.template insert<double>(OBSERVATIONS_BLK, y); }
     void set_covariates(const DMatrix<double>& X) { data_.template insert<double>(DESIGN_MATRIX_BLK, X); }
+    void set_spatial_locations(const DMatrix<double>& locs) { model_.set_spatial_locations(locs); }
     void set_lambda(const DVector<double>& lambda) { model_.set_lambda(lambda); }
     // getters
     const DVector<double>& f() const { return model_.f(); }
