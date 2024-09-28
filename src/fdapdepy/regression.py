@@ -9,11 +9,14 @@ def match_arg(x, lst):
 optimizer_ = ("grid", "newton", "gd", "bfgs")
 edf_evaluation_ = ("stochastic", "exact")
 
-def gcv(lambda_ = None, optimizer = "grid", # non puoi usare lambda perché è una keyword 
+def gcv(lambda_ = None, optimizer = None, # non puoi usare lambda perché è una keyword 
         edf_evaluation = "stochastic", seed = None, n_mc_samples = 100, max_iter = 20,
                 step = 1e-2, tolerance = 1e-4):
-  
-    out = {"calibration": "gcv", "lambda": lambda_, 
+    out = {}
+    if(optimizer is None):
+        out ={"calibration": "off", "lambda": lambda_ if lambda_ is not None else np.array(1.0).reshape(1,1)}
+    else:
+        out = {"calibration": "gcv", "lambda": lambda_, 
             "edf": edf_evaluation, "n_mc_samples": n_mc_samples,
             "seed": -1 if seed is None else seed,
             "optimizer": optimizer,
@@ -29,10 +32,10 @@ def model_parse_arguments(model, **kwargs):
     elif (model=="gsrpde"):
         out = {}
         out["fpirls_tolerance"] = 1e-4
-        out["fprils_max_iter"] = 200
+        out["fpirls_max_iter"] = 200
         if ("fpirls_params" in  locals()["kwargs"].keys()):
-            out["fpirls_tolerance"] = locals()["kwargs"]["fpirls_params"]["tolerance"] if "tolerence" in locals()["kwargs"]["fpirls_params"].keys() else 1e-4
-            out["fprils_max_iter"] = locals()["kwargs"]["fpirls_params"]["fprils_max_iter"] if "fprils_max_iter" in locals()["kwargs"]["fpirls_params"].keys() else 200
+            out["fpirls_tolerance"] = locals()["kwargs"]["fpirls_params"]["fpirls_tolerance"] if "fpirls_tolerance" in locals()["kwargs"]["fpirls_params"].keys() else 1e-4
+            out["fpirls_max_iter"] = locals()["kwargs"]["fpirls_params"]["fpirls_max_iter"] if "fpirls_max_iter" in locals()["kwargs"]["fpirls_params"].keys() else 200
         return out
     
 distributions = {"poisson": 0, "bernulli": 1, "exponential": 2, "gamma": 3}
@@ -79,10 +82,10 @@ class  srpde:
         self.__penalty = penalty # pde class
 
         # sampling type  = 0 -> pointwise (at mesh nodes)
-        if ( self.__model == "srpde"):
+        if ( self.model == "srpde"):
                 self.__cpp_handler = cpp_srpde(penalty, sampling)
         else: 
-                self.__cpp_handler = cpp_gsrpde(penaly, sampling, distributions[family])
+                self.__cpp_handler = cpp_gsrpde(penalty, sampling, distributions[family])
         
         self.cpp_handler.set_observations(self.observations)
         
@@ -99,20 +102,23 @@ class  srpde:
         fit_data = {}
         
         kargs = locals()["kwargs"].keys()
-        print(kargs)
         if ("calibration" in kargs):
             if isinstance(locals()["kwargs"]["calibration"], float):
                 fit_data["calibration"] = "off"
-                fit_data["lambda"] = locals()["kwargs"]["calibration"]
+                fit_data["lambda"] = np.array( locals()["kwargs"]["calibration"] ).reshape(1,1)
             elif(isinstance(locals()["kwargs"]["calibration"], dict)):
                 fit_data = locals()["kwargs"]["calibration"]
             else:
                 return
         else:
             fit_data["calibration"] = "off"
-            fit_data["lambda"] = 1.0
+            fit_data["lambda"] = np.array(1.0).reshape(1,1)
         
-        fit_data.update(model_parse_arguments(self.__model, **kwargs))
+        fpirls_params = model_parse_arguments(self.model, **kwargs)
+        if(self.__model == "gsrpde"):
+            self.cpp_handler.set_fpirls_tolerance(fpirls_params["fpirls_tolerance"])
+            self.cpp_handler.set_fpirls_max_iter(fpirls_params["fpirls_max_iter"])
+
         self.cpp_handler.fit(fit_data)
 
     def fitted(self):
@@ -142,6 +148,10 @@ class  srpde:
     def locations(self):
         return self.__locations
     
+    @property
+    def model(self):
+        return self.__model
+
     @property 
     def cpp_handler(self):
         return self.__cpp_handler

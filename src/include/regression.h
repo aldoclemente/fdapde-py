@@ -58,14 +58,17 @@ template <typename ModelType> class RegressionModel {
    protected:
     using RegularizationType = typename ModelType::RegularizationType;
     using DataContainer = BlockFrame<double, int>;
+    using PDEType = typename py::PDE::PDEType;
     ModelType model_;      // wrapped model
     DataContainer data_;   // data storage (can be removed if we initialize the data stack in init())
+    PDEType* pde_;
     // calibration
     DVector<double> optim_lambda_;   // optimal selected level of smoothing
     calibration::GCV<
       std::conditional_t<std::is_same_v<RegularizationType, models::SpaceOnly>, models::SpaceOnly, models::SpaceTime>>
       gcv_;
     calibration::KCV kcv_;
+
 
     // calibrate regression model according to provided input
     void calibrate(const pybind11::dict py_input) {
@@ -107,7 +110,9 @@ template <typename ModelType> class RegressionModel {
     // setters
     void set_observations(const DMatrix<double>& y) { data_.template insert<double>(OBSERVATIONS_BLK, y); }
     void set_covariates(const DMatrix<double>& X) { data_.template insert<double>(DESIGN_MATRIX_BLK, X); }
-    void set_spatial_locations(const DMatrix<double>& locs) { model_.set_spatial_locations(locs); }
+    void set_spatial_locations(const DMatrix<double>& locs) { 
+        model_.set_spatial_locations(locs);
+    }
     void set_lambda(const DVector<double>& lambda) { model_.set_lambda(lambda); }
     // getters
     const DVector<double>& f() const { return model_.f(); }
@@ -134,13 +139,34 @@ template <typename RegularizationType> struct GSRPDE : public RegressionModel<mo
     // space-only, space-time parabolic
     GSRPDE(pybind11::object py_obj, int sampling_type, int distribution)
     requires(models::is_space_only<ModelType>::value || models::is_space_time_parabolic<ModelType>::value) {
+        //Base::pde_ = &get_obj_as<py::PDE>(py_obj)->pde;
         init_(distribution, get_obj_as<py::PDE>(py_obj)->pde, Sampling(sampling_type));
+        /*
+        if (distribution == 0) 
+            Base::model_ = ModelType(get_obj_as<py::PDE>(py_obj)->pde, Sampling(sampling_type), models::Poisson());
+        if (distribution == 1) 
+            Base::model_ = ModelType(get_obj_as<py::PDE>(py_obj)->pde, Sampling(sampling_type), models::Bernulli());
+        if (distribution == 2) 
+            Base::model_ = ModelType(get_obj_as<py::PDE>(py_obj)->pde, Sampling(sampling_type), models::Exponential());
+        if (distribution == 3) 
+            Base::model_ = ModelType(get_obj_as<py::PDE>(py_obj)->pde, Sampling(sampling_type), models::Gamma());
+        
+        if (distribution == 0) 
+            Base::model_ = ModelType(*Base::pde_, Sampling(sampling_type), models::Poisson());
+        if (distribution == 1) 
+            Base::model_ = ModelType(*Base::pde_, Sampling(sampling_type), models::Bernulli());
+        if (distribution == 2) 
+            Base::model_ = ModelType(*Base::pde_, Sampling(sampling_type), models::Exponential());
+        if (distribution == 3) 
+            Base::model_ = ModelType(*Base::pde_, Sampling(sampling_type), models::Gamma());
+        */
     }
 
     // space-time separable
     GSRPDE(pybind11::object py_obj1, pybind11::object py_obj2, int sampling_type, int distribution)
     requires(models::is_space_time_separable<ModelType>::value) {
         init_(distribution, get_obj_as<py::PDE>(py_obj1)->pde, get_obj_as<py::PDE>(py_obj2)->pde, Sampling(sampling_type));
+        
     }
     void set_fpirls_tolerance(double tol) { Base::model_.set_fpirls_tolerance(tol); }
     void set_fpirls_max_iter(std::size_t max_iter) { Base::model_.set_fpirls_max_iter(max_iter); }

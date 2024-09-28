@@ -2,9 +2,6 @@
 
 The package was developed using [pybind11](https://github.com/pybind/pybind11) and follows the [Scientific Python Library Development Guide](https://learn.scientific-python.org/development/).
 It is part of the PhD project for the course [Python Driving Licence](https://www11.ceda.polimi.it/schedaincarico/schedaincarico/controller/scheda_pubblica/SchedaPublic.do?&evn_default=evento&c_classe=802611&lang=IT&__pj0=0&__pj1=ba8223ddc8f86e609d586a38f93a860c) at Politecnico di Milano 
-
-## Theoretical framework
-    ...
     
 ## Build Requirements 
 To build the package you will need:
