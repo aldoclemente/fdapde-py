@@ -9,14 +9,14 @@ def match_arg(x, lst):
 optimizer_ = ("grid", "newton", "gd", "bfgs")
 edf_evaluation_ = ("stochastic", "exact")
 
-def gcv(lambda_ = None, optimizer = None, # non puoi usare lambda perché è una keyword 
+def gcv(smooth_params = None, optimizer = "grid",  
         edf_evaluation = "stochastic", seed = None, n_mc_samples = 100, max_iter = 20,
                 step = 1e-2, tolerance = 1e-4):
     out = {}
     if(optimizer is None):
-        out ={"calibration": "off", "lambda": lambda_ if lambda_ is not None else np.array(1.0).reshape(1,1)}
+        out ={"calibration": "off", "lambda": smooth_params if smooth_params is not None else np.array(1.0).reshape(1,1)}
     else:
-        out = {"calibration": "gcv", "lambda": lambda_, 
+        out = {"calibration": "gcv", "lambda": smooth_params, 
             "edf": edf_evaluation, "n_mc_samples": n_mc_samples,
             "seed": -1 if seed is None else seed,
             "optimizer": optimizer,
